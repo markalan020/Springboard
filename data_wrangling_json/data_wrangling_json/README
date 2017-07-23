@@ -1,0 +1,11 @@
+READ ME:
+
+These exercises are from the Springboard Data Science Career Track. The exercises attempt to familiarize students with wrangling of json data files. For all included exercises, I utilized the world bank projects dataset. 
+
+In exercise 1, I needed to identify the 10 countries with the most projects. I did a simple value count on the country names and then showed the top 10 values.
+
+In exercise 2, I needed to find the top 10 major project themes. To begin, I needed to look at the structure of the data in the column mjtheme_namecode. After examining it, I saw that there were dictionarys. I loaded the data as strings in order to normalize the data using json_normalize. From there, I did a value count on the themes and then ranked the top 10.
+
+Exercise 3 builds upon the previous exercise. In exercise 2, the ranking contained 122 instances of ''. In exercise 3, I needed to fill those blank values with the correct text based on the theme's numerical code. I selected all rows of data that did not contain a '' value in the name column. I then deleted all duplicates so that the end result was a dataframe with unique code and name values. I then used the dataframe to merge with the dataframe in exercise 2 to fill in the blanks. 
+
+As an additional check, I reran the ranking of the top 10 major project themes and saw that economic management is now included and the '' values are gone.
