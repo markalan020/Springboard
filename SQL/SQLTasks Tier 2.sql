@@ -145,5 +145,59 @@ Having total_cost>30
 ON M.MEMID=B.MEMID
 ORDER BY B.TOTAL_COST desc
 
+/* PART 2: SQLite
 
+Export the country club data from PHPMyAdmin, and connect to a local SQLite instance from Jupyter notebook 
+for the following questions.  
 
+QUESTIONS:
+/* Q10: Produce a list of facilities with a total revenue less than 1000.
+The output of facility name and total revenue, sorted by revenue. Remember
+that there's a different cost for guests and members! */
+
+SELECT Facilities.name,
+    sum(CASE WHEN Bookings.memid = 0 THEN Facilities.guestcost * Bookings.slots
+    ELSE Facilities.membercost * Bookings.slots END) AS revenue
+FROM Members, Facilities, Bookings
+WHERE Bookings.facid = Facilities.facid
+    AND Members.memid = Bookings.memid
+GROUP BY Facilities.name
+HAVING revenue < 1000
+ORDER BY revenue desc
+
+/* Q11: Produce a report of members and who recommended them in alphabetic surname,firstname order */
+SELECT 
+    (M.SURNAME || ',' || M.FIRSTNAME) AS MEMBER,
+    (R.SURNAME || ',' || R.FIRSTNAME) AS RECOMMENDED_BY
+FROM Members as M
+JOIN Members as R
+ON M.RECOMMENDEDBY = R.MEMID
+ORDER BY MEMBER;
+
+/* Q12: Find the facilities with their usage by member, but not guests */
+
+SELECT
+    F.Name FACILITY_NAME,
+    M.SURNAME || ',' || M.FIRSTNAME MEMBER_NAME,
+    COUNT(B.BOOKID) TOTAL_MEMBER_USAGE
+FROM Members M
+INNER JOIN Bookings as B
+ON B.MEMID = M.MEMID
+INNER JOIN Facilities as F
+ON F.FACID = B.FACID
+WHERE M.MEMID!=0
+GROUP BY FACILITY_NAME, MEMBER_NAME;
+
+/* Q13: Find the facilities usage by month, but not guests */
+
+SELECT
+    F.Name FACILITY_NAME,
+    strftime('%m', B.STARTTIME) BOOKING_MONTH,
+    COUNT(B.BOOKID) TOTAL_MEMBER_USAGE
+FROM Members M
+INNER JOIN Bookings as B
+ON B.MEMID = M.MEMID
+INNER JOIN Facilities as F
+ON F.FACID = B.FACID
+WHERE M.MEMID!=0
+GROUP BY FACILITY_NAME, BOOKING_MONTH;
